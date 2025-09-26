@@ -20,11 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.res.stringResource
 
-
-
-
-
-
 @Composable
 fun StartOrderScreen(
     modifier: Modifier = Modifier
@@ -49,6 +44,15 @@ fun StartOrderScreen(
         )
 
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
+    }
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(
+            dimensionResource(R.dimen.padding_medium)
+        )
+    ) {
+        // Aquí se colocarán más elementos
     }
 }
 
