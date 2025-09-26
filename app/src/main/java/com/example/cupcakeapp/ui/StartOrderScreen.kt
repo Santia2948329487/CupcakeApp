@@ -16,6 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.stringResource
+
 
 
 
@@ -39,6 +43,12 @@ fun StartOrderScreen(
         )
 
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+        Text(
+            text = stringResource(R.string.order_cupcakes),
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
     }
 }
 
