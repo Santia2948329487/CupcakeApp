@@ -3,25 +3,57 @@ package com.example.cupcakeapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.cupcakeapp.data.DataSource
-import com.example.cupcakeapp.ui.theme.CupcakeAppTheme
 import com.example.cupcakeapp.ui.StartOrderScreen
+import com.example.cupcakeapp.ui.SelectOptionScreen
+import com.example.cupcakeapp.ui.theme.CupcakeAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             CupcakeAppTheme {
-                // Llamamos a la nueva pantalla de inicio del pedido
-                StartOrderScreen(
-                    quantityOptions = DataSource.quantityOptions,
-                    onNextButtonClicked = { selectedQuantity ->
-                        // aquí decides qué hacer cuando se pulse el botón siguiente
-                        // por ejemplo: navegar a otra pantalla
-                    }
-                )
-
+                CupcakeNavigation()
             }
         }
+    }
+}
+
+@Composable
+fun CupcakeNavigation() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = "start"
+    ) {
+        composable("start") {
+            StartOrderScreen(
+                quantityOptions = DataSource.quantityOptions,
+                onNextButtonClicked = { selectedQuantity ->
+                    // Navegar a la pantalla de selección
+                    navController.navigate("select_option")
+                }
+            )
+        }
+        composable("select_option") {
+            SelectOptionScreen(
+                onNavigateUp = { navController.popBackStack() } // 👈 aquí
+            )
+        }
+
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun MainPreview() {
+    CupcakeAppTheme {
+        CupcakeNavigation()
     }
 }

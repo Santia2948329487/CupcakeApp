@@ -24,53 +24,74 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import com.example.cupcakeapp.data.DataSource
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartOrderScreen(
     quantityOptions: List<Pair<Int, Int>>,
     onNextButtonClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
-)
- {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
-    ) {
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-
-        Image(
-            painter = painterResource(R.drawable.cupcake),
-            contentDescription = null,
-            modifier = Modifier.width(300.dp)
-        )
-
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-        Text(
-            text = stringResource(R.string.order_cupcakes),
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
-    }
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(
-            dimensionResource(R.dimen.padding_medium)
-        )
-    ) {
-        quantityOptions.forEach { item ->
-            SelectQuantityButton(
-                labelResourceId = item.first,
-                onClick = { onNextButtonClicked(item.second) },
-                modifier = Modifier.fillMaxWidth()
+) {
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
             )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Bloque superior (imagen + título intermedio)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+                Image(
+                    painter = painterResource(R.drawable.cupcake),
+                    contentDescription = null,
+                    modifier = Modifier.width(300.dp)
+                )
+
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+                Text(
+                    text = stringResource(R.string.order_cupcakes),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
+
+            // Bloque inferior (botones)
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+            ) {
+                quantityOptions.forEach { item ->
+                    SelectQuantityButton(
+                        labelResourceId = item.first,
+                        onClick = { onNextButtonClicked(item.second) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
         }
     }
 }
+
+
 
 @Composable
 fun SelectQuantityButton(
