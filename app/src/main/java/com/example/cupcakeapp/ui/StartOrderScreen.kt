@@ -26,8 +26,11 @@ import androidx.compose.material3.Text
 
 @Composable
 fun StartOrderScreen(
+    quantityOptions: List<Pair<Int, Int>>,
+    onNextButtonClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
-) {
+)
+ {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -56,7 +59,13 @@ fun StartOrderScreen(
             dimensionResource(R.dimen.padding_medium)
         )
     ) {
-        // Aquí se colocarán más elementos
+        quantityOptions.forEach { item ->
+            SelectQuantityButton(
+                labelResourceId = item.first,
+                onClick = { onNextButtonClicked(item.second) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
@@ -78,6 +87,12 @@ fun SelectQuantityButton(
 @Composable
 fun StartOrderPreview() {
     CupcakeAppTheme {
-        StartOrderScreen()
+        StartOrderScreen(
+            quantityOptions = DataSource.quantityOptions,
+            onNextButtonClicked = {},
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(dimensionResource(R.dimen.padding_medium))
+        )
     }
 }
