@@ -17,34 +17,61 @@ fun PickupScreen(
     quantity: Int,
     flavor: String,
     onNavigateUp: () -> Unit = {},
-    onConfirmPickup: (selectedPickupIndex: Int) -> Unit = {},
+    onConfirmPickup: (selectedPickup: String) -> Unit = {}, // 👈 ahora devuelve String
     modifier: Modifier = Modifier
 ) {
     var selectedIndex by remember { mutableStateOf(-1) }
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Pickup date") }, navigationIcon = {
-                IconButton(onClick = onNavigateUp) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
-            })
+            TopAppBar(
+                title = { Text("Pickup date") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            )
         }
     ) { innerPadding ->
-        Column(modifier = modifier.padding(innerPadding).padding(16.dp)) {
+        Column(
+            modifier = modifier
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
             Text(text = "Sabor: $flavor")
             Text(text = "Cantidad: $quantity")
             Spacer(modifier = Modifier.height(8.dp))
+
             LazyColumn {
                 itemsIndexed(options) { idx, option ->
-                    Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-                        RadioButton(selected = selectedIndex == idx, onClick = { selectedIndex = idx })
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        RadioButton(
+                            selected = selectedIndex == idx,
+                            onClick = { selectedIndex = idx }
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(option)
                     }
                 }
             }
+
             Spacer(modifier = Modifier.height(16.dp))
+
             Button(
-                onClick = { if (selectedIndex >= 0) onConfirmPickup(selectedIndex) },
+                onClick = {
+                    if (selectedIndex >= 0) {
+                        val selectedDate = options[selectedIndex] // 👈 obtener String
+                        onConfirmPickup(selectedDate) // 👈 pasar la fecha seleccionada
+                    }
+                },
                 enabled = selectedIndex >= 0,
                 modifier = Modifier.fillMaxWidth()
             ) {

@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.cupcakeapp.ui.PickupScreen
-
+import com.example.cupcakeapp.ui.SummaryScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,18 +40,17 @@ fun CupcakeNavigation() {
         startDestination = "start",
         modifier = Modifier.fillMaxSize()
     ) {
-        // start: seleccion de cantidad
+        // Pantalla inicial: seleccion de cantidad
         composable("start") {
             StartOrderScreen(
                 quantityOptions = DataSource.quantityOptions,
                 onNextButtonClicked = { selectedQuantity ->
-                    // navegamos y pasamos la cantidad como argumento
                     navController.navigate("select_option/$selectedQuantity")
                 }
             )
         }
 
-        // select_option espera {quantity}
+        // Selección de sabor
         composable(
             route = "select_option/{quantity}",
             arguments = listOf(navArgument("quantity") { type = NavType.IntType })
@@ -64,44 +63,63 @@ fun CupcakeNavigation() {
                 quantity = quantityArg,
                 onSelectionChanged = { /* opcional */ },
                 onNextButtonClicked = { selectedFlavorIndex ->
-                    // navegamos a pickup pasando la cantidad y el index del sabor
-                    navController.navigate("pickup/$quantityArg/$selectedFlavorIndex")
+                    val subtotal = quantityArg * 2.0 // ejemplo: cada cupcake cuesta 2
+                    val flavorName = context.getString(DataSource.flavors[selectedFlavorIndex])
+                    navController.navigate("pickup/$quantityArg/$flavorName/$subtotal")
                 },
                 onNavigateUp = { navController.popBackStack() }
             )
         }
 
-        // ruta pickup con ARGs (cantidad y flavorIndex)
+        // Selección de fecha de pickup
         composable(
-            route = "pickup/{quantity}/{flavorIndex}",
+            route = "pickup/{quantity}/{flavor}/{subtotal}",
             arguments = listOf(
                 navArgument("quantity") { type = NavType.IntType },
-                navArgument("flavorIndex") { type = NavType.IntType }
+                navArgument("flavor") { type = NavType.StringType },
+                navArgument("subtotal") { type = NavType.FloatType }
             )
         ) { backStackEntry ->
-            val context = LocalContext.current
-            val quantity = backStackEntry.arguments?.getInt("quantity") ?: 1
-            val flavorIndex = backStackEntry.arguments?.getInt("flavorIndex") ?: 0
-            // convertimos flavorIndex a string usando DataSource
-            val flavorName = DataSource.flavors.getOrNull(flavorIndex)?.let { resId -> context.getString(resId) } ?: ""
+            val quantity = backStackEntry.arguments?.getInt("quantity") ?: 0
+            val flavor = backStackEntry.arguments?.getString("flavor") ?: ""
+            val subtotal = backStackEntry.arguments?.getFloat("subtotal")?.toDouble() ?: 0.0
 
-            // Construye la lista de opciones de pickup (ejemplo)
-            val pickupOptions = DataSource.pickupOptions.map { id -> context.getString(id) }
-
-            // Llamamos a PickupScreen (implementa a tu gusto)
             PickupScreen(
-                options = pickupOptions,
+                options = listOf("Hoy", "Mañana", "Próxima semana"),
                 quantity = quantity,
-                flavor = flavorName,
+                flavor = flavor,
                 onNavigateUp = { navController.popBackStack() },
-                onConfirmPickup = { selectedPickupIndex ->
-                    // ejemplo: navegar a summary (si tienes summary)
-                    navController.navigate("summary/$quantity/$flavorIndex/$selectedPickupIndex")
+                onConfirmPickup = { date ->
+                    navController.navigate("summary/$quantity/$flavor/$date/$subtotal")
                 }
             )
         }
 
-        // ... (puedes agregar la ruta "summary/..." aquí si ya la implementaste)
+        // Resumen final
+        composable(
+            route = "summary/{quantity}/{flavor}/{date}/{subtotal}",
+            arguments = listOf(
+                navArgument("quantity") { type = NavType.IntType },
+                navArgument("flavor") { type = NavType.StringType },
+                navArgument("date") { type = NavType.StringType },
+                navArgument("subtotal") { type = NavType.FloatType }
+            )
+        ) { backStackEntry ->
+            val quantity = backStackEntry.arguments?.getInt("quantity") ?: 0
+            val flavor = backStackEntry.arguments?.getString("flavor") ?: ""
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            val subtotal = backStackEntry.arguments?.getFloat("subtotal")?.toDouble() ?: 0.0
+
+            SummaryScreen(
+                quantity = quantity,
+                flavor = flavor,
+                date = date,
+                subtotal = subtotal,
+                onConfirm = {
+                    navController.popBackStack("start", inclusive = false)
+                }
+            )
+        }
     }
 }
 
