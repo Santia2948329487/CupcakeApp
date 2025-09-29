@@ -1,33 +1,33 @@
 package com.example.cupcakeapp.ui
 
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.cupcakeapp.ui.theme.CupcakeAppTheme
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.dimensionResource
-import com.example.cupcakeapp.R
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.res.stringResource
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
-import com.example.cupcakeapp.data.DataSource
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.cupcakeapp.R
+import com.example.cupcakeapp.data.DataSource
+import com.example.cupcakeapp.ui.theme.CupcakeAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,24 +38,20 @@ fun StartOrderScreen(
 ) {
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
+            TopAppBar(
+                title = { Text(text = stringResource(R.string.app_name)) }
             )
         }
     ) { innerPadding ->
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .padding(dimensionResource(R.dimen.padding_medium)),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Bloque superior (imagen + título intermedio)
+            // Parte superior: imagen + título
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
 
@@ -73,7 +69,7 @@ fun StartOrderScreen(
                 )
             }
 
-            // Bloque inferior (botones)
+            // Parte inferior: botones de cantidad
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -90,8 +86,6 @@ fun StartOrderScreen(
         }
     }
 }
-
-
 
 @Composable
 fun SelectQuantityButton(
@@ -114,9 +108,7 @@ fun StartOrderPreview() {
         StartOrderScreen(
             quantityOptions = DataSource.quantityOptions,
             onNextButtonClicked = {},
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(dimensionResource(R.dimen.padding_medium))
+            modifier = Modifier.fillMaxSize()
         )
     }
 }

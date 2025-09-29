@@ -23,6 +23,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 
 // tus propios imports
 import com.example.cupcakeapp.data.DataSource
@@ -62,50 +64,3 @@ fun CupcakeAppBar(
         }
     )
 }
-
-@Composable
-fun CupcakeApp() {
-    val navController: NavHostController = rememberNavController()
-
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = CupcakeScreen.valueOf(
-        backStackEntry?.destination?.route ?: CupcakeScreen.Start.name
-    )
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            CupcakeAppBar(
-                currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() }
-            )
-        }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = CupcakeScreen.Start.name,
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(innerPadding)
-        ) {
-            composable(route = CupcakeScreen.Start.name) {
-                StartOrderScreen(
-                    quantityOptions = DataSource.quantityOptions,
-                    onNextButtonClicked = {
-                        navController.navigate(CupcakeScreen.Flavor.name)
-                    },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
-                )
-            }
-            composable(route = CupcakeScreen.Flavor.name) {
-                SelectOptionScreen()
-            }
-        }
-    }
-}
-
-

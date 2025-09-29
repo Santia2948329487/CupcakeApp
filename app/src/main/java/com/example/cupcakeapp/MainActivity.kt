@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,11 +43,12 @@ fun CupcakeNavigation() {
             )
         }
         composable("select_option") {
+            val context = LocalContext.current
             SelectOptionScreen(
-                onNavigateUp = { navController.popBackStack() } // 👈 aquí
+                onNavigateUp = { navController.popBackStack() },
+                options = DataSource.flavors.map { id -> context.resources.getString(id) }
             )
         }
-
     }
 }
 
