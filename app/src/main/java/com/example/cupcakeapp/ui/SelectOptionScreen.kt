@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.cupcakeapp.R
 import com.example.cupcakeapp.ui.theme.CupcakeAppTheme
 
@@ -19,16 +20,18 @@ import com.example.cupcakeapp.ui.theme.CupcakeAppTheme
 @Composable
 fun SelectOptionScreen(
     options: List<String>,
-    quantity: Int, // 👈 cantidad de cupcakes recibida de la pantalla anterior
+    quantity: Int,
     onSelectionChanged: (String) -> Unit = {},
+    onNextButtonClicked: (selectedIndex: Int) -> Unit = {},
     modifier: Modifier = Modifier,
     onNavigateUp: () -> Unit = {}
 ) {
-    var selectedValue by rememberSaveable { mutableStateOf("") }
+    // índice seleccionado (-1 = ninguno)
+    var selectedIndex by rememberSaveable { mutableStateOf(-1) }
 
-    // 👇 Precio fijo por cupcake
+    // Precio fijo por cupcake (ajusta si quieres)
     val pricePerCupcake = 2
-    val subtotal = if (selectedValue.isNotEmpty()) quantity * pricePerCupcake else 0
+    val subtotal = if (selectedIndex >= 0) quantity * pricePerCupcake else 0
 
     Scaffold(
         topBar = {
@@ -41,7 +44,11 @@ fun SelectOptionScreen(
                             contentDescription = stringResource(R.string.back_button)
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
         }
     ) { innerPadding ->
@@ -50,42 +57,64 @@ fun SelectOptionScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(dimensionResource(R.dimen.padding_medium)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Lista de opciones de sabores
-            options.forEach { item ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .selectable(
-                            selected = selectedValue == item,
+            Column {
+                options.forEachIndexed { idx, item ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = (selectedIndex == idx),
+                                onClick = {
+                                    selectedIndex = idx
+                                    onSelectionChanged(item)
+                                }
+                            )
+                            .padding(vertical = dimensionResource(R.dimen.padding_small)),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = (selectedIndex == idx),
                             onClick = {
-                                selectedValue = item
+                                selectedIndex = idx
                                 onSelectionChanged(item)
                             }
                         )
-                        .padding(vertical = dimensionResource(R.dimen.padding_small)),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = selectedValue == item,
-                        onClick = {
-                            selectedValue = item
-                            onSelectionChanged(item)
-                        }
-                    )
-                    Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
-                    Text(item, style = MaterialTheme.typography.bodyLarge)
+
+                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+
+                        Text(
+                            text = item,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+                // Subtotal en tiempo real
+                Text(
+                    text = stringResource(R.string.subtotal_price, subtotal),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
 
-            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-
-            // 👇 Mostrar subtotal
-            Text(
-                text = stringResource(R.string.subtotal_price, subtotal),
-                style = MaterialTheme.typography.titleMedium
-            )
+            // Botón Next en la parte inferior
+            Button(
+                onClick = {
+                    if (selectedIndex >= 0) {
+                        onNextButtonClicked(selectedIndex)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = dimensionResource(R.dimen.padding_small)),
+                enabled = selectedIndex >= 0
+            ) {
+                Text(text = stringResource(R.string.next_button))
+            }
         }
     }
 }
@@ -96,7 +125,9 @@ fun SelectOptionPreview() {
     CupcakeAppTheme {
         SelectOptionScreen(
             options = listOf("Vanilla", "Chocolate", "Red Velvet"),
-            quantity = 6
+            quantity = 6,
+            onSelectionChanged = {},
+            onNextButtonClicked = {}
         )
     }
 }

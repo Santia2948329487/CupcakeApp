@@ -12,4 +12,8 @@
     <string name="salted_caramel">Salted Caramel</string>
     <string name="coffee">Coffee</string>
     <string name="subtotal_price">Subtotal: $%1$d</string>
+    <string name="pickup_today">Today</string>
+    <string name="pickup_tomorrow">Tomorrow</string>
+    <string name="pickup_next_day">Day after tomorrow</string>
+    <string name="next_button">Next</string>
 </resources>

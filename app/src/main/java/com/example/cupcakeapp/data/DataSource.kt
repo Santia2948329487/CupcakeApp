@@ -16,4 +16,9 @@ object DataSource {
         Pair(R.string.six_cupcakes, 6),
         Pair(R.string.twelve_cupcakes, 12)
     )
+    val pickupOptions = listOf(
+        R.string.pickup_today,
+        R.string.pickup_tomorrow,
+        R.string.pickup_next_day
+    )
 }
